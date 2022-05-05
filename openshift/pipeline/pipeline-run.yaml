@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1 
 kind: PipelineRun 
 metadata:
-  name: maven-pipelinerun
+  generateName: maven-taskrun-
 spec:
   pipelineRef:
     name: maven-pipeline

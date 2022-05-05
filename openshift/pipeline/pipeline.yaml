@@ -45,6 +45,7 @@ spec:
       value:
         - '-B'
         - '-DskipTests'
+        - '-Dmaven.gitcommitid.skip=true'
         - 'install'
       name: CONTEXT_DIR
       value: $(params.CONTEXT_DIR)
