@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1 
+kind: PipelineRun 
+metadata:
+  name: maven-pipelinerun
+spec:
+  pipelineRef:
+    name: maven-pipeline
+  params: 
+  - name: GITHUB_REPO_REVISION
+    value: spring
+  - name: CONTEXT_DIR
+    value: src/spring-petclinic
+  workspaces: 
+  - name: shared-workspace
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 500Mi
+  - name: maven
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi

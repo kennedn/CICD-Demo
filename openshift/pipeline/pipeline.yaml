@@ -5,6 +5,7 @@ metadata:
 spec:
   workspaces:
   - name: shared-workspace
+  - name: maven
   params:
   - name: IMAGE_NAME
     description: >-
@@ -35,23 +36,6 @@ spec:
       value: "true"
     - name: revision
       value: $(params.GITHUB_REPO_REVISION)
-  - name: build-java-test
-    taskRef:
-      name: maven
-      kind: ClusterTask
-    params:
-    - name: GOALS
-      value:
-        - '-B'
-        - 'clean'
-        - 'test'
-      name: CONTEXT_DIR
-      value: $(params.CONTEXT_DIR)
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-    runAfter:
-    - fetch-repository
   - name: build-java
     taskRef:
       name: maven
@@ -61,15 +45,16 @@ spec:
       value:
         - '-B'
         - '-DskipTests'
-        - 'clean'
         - 'install'
       name: CONTEXT_DIR
       value: $(params.CONTEXT_DIR)
     workspaces:
+    - name: maven-settings
+      workspace: maven
     - name: source
       workspace: shared-workspace
     runAfter:
-    - build-java-test
+    - fetch-repository 
   - name: build-image
     taskRef:
       name: buildah
