@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: maven-pipeline
+spec:
+  workspaces:
+  - name: shared-workspace
+  params:
+  - name: IMAGE_NAME
+    description: >-
+      The fully qualified image name e.g example.com/tekton-tutorial/greeter
+    default: https://quay.io/kennedn/CICD-Demo
+  - name: GITHUB_REPO_URL
+    description: The GitHub Repo of the Java Application
+    default: https://github.com/kennedn/CICD-Demo
+  - name: GITHUB_REPO_REVISION
+    description: The GitHub revision to use
+    default: master
+  - name: CONTEXT_DIR
+    description: The directory within the repository on which we want to execute maven goals
+  tasks:
+  - name: fetch-repository
+    taskRef:
+      name: git-clone
+      kind: ClusterTask
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    params:
+    - name: url
+      value: $(params.GITHUB_REPO_URL)
+    - name: subdirectory
+      value: ""
+    - name: deleteExisting
+      value: "true"
+    - name: revision
+      value: $(params.GITHUB_REPO_REVISION)
+  - name: build-java-test
+    taskRef:
+      name: maven
+      kind: ClusterTask
+    params:
+    - name: GOALS
+      value:
+        - '-B'
+        - 'clean'
+        - 'test'
+      name: CONTEXT_DIR
+      value: $(params.CONTEXT_DIR)
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - fetch-repository
+  - name: build-java
+    taskRef:
+      name: maven
+      kind: ClusterTask
+    params:
+    - name: GOALS
+      value:
+        - '-B'
+        - '-DskipTests'
+        - 'clean'
+        - 'install'
+      name: CONTEXT_DIR
+      value: $(params.CONTEXT_DIR)
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - build-java-test
+  - name: build-image
+    taskRef:
+      name: buildah
+      kind: ClusterTask
+    params:
+    - name: IMAGE
+      value: $(params.IMAGE_NAME)
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - build-java

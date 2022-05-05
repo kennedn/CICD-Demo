@@ -1,0 +1,5 @@
+{{- range .spec.params -}}
+{{.name}}{{":"}}
+{{"  "}}{{.description}}
+{{"  "}}{{.default}}
+{{end}}

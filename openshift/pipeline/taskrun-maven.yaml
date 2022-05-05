@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: s2i-petclinic-taskrun
+spec:
+  # Use service account with git and image repo credentials
+  taskRef:
+    name: s2i
+  params:
+  - name: IMAGE
+    value: quay.io/repository/kennedn/maven-s2i
+  workspaces:
+  - name: source
+    persistentVolumeClaim:
+      claimName: my-source
+  resources:
+    outputs:
+    - name: image
+      resourceSpec:
+        type: image
+        params:
+        - name: url
+          value: gcr.io/my-repo/nodejs-s2i-ex
