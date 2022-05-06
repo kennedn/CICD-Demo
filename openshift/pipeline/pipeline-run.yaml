@@ -10,16 +10,24 @@ spec:
   pipelineRef:
     name: maven-pipeline
   params: 
+  - name: GITHUB_REPO_URL
+    value: https://github.com/kennedn/CICD-Demo
   - name: GITHUB_REPO_REVISION
     value: spring
-  - name: CONTEXT_DIR
+  - name: MAVEN_CONTEXT
     value: src/spring-petclinic
+  - name: BUILDAH_REPO_URL
+    value: quay.io/kennedn/cicd-demo
+  - name: BUILDAH_CONTEXT
+    value: src
   workspaces: 
-  - name: maven
-    subPath: maven
-    persistentVolumeClaim:
-      claimName: tekton-tutorial-sources
+  - name: maven-settings
+    emptyDir: {}
   - name: shared-workspace
-    subPath: source
-    persistentVolumeClaim:
-      claimName: tekton-tutorial-sources
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

@@ -1,0 +1,25 @@
+
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: buildah- 
+  labels: 
+    tekton.dev/task: buildah
+spec:
+  podTemplate:
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 0
+  taskRef:
+    name: buildah
+    kind: ClusterTask
+  params: 
+    - name: IMAGE
+      value: quay.io/kennedn/cicd-demo
+    - name: CONTEXT
+      value: source/src
+  workspaces: 
+    - name: source
+      persistentVolumeClaim:
+        claimName: tekton-tutorial-sources
+

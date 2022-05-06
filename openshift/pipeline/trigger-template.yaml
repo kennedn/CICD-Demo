@@ -1,0 +1,48 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: petclinic-build
+spec:
+  params:
+  - name: git-repo-url
+    description: The git repository url
+  - name: git-revision
+    description: The git revision
+    default: pipelines-1.7
+  - name: git-repo-name
+    description: The name of the deployment to be created / patched
+  resourceTemplates:
+  - apiVersion: tekton.dev/v1beta1 
+    kind: PipelineRun 
+    metadata:
+      generateName: maven-image-build-$(tt.params.git-repo-name)-
+    spec:
+      serviceAccountName: pipeline
+      podTemplate:
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+      pipelineRef:
+        name: maven-pipeline
+      params: 
+      - name: GITHUB_REPO_URL
+        value: $(tt.params.git-repo-url)
+      - name: GITHUB_REPO_REVISION
+        value: $(tt.params.git-revision)
+      - name: MAVEN_CONTEXT
+        value: src/spring-petclinic
+      - name: BUILDAH_REPO_URL
+        value: quay.io/kennedn/cicd-demo
+      - name: BUILDAH_CONTEXT
+        value: src
+      workspaces: 
+      - name: maven-settings
+        emptyDir: {}
+      - name: shared-workspace
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
