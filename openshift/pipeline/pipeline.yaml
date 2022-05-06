@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  generateName: maven-pipeline-
+  name: maven-pipeline
 spec:
   workspaces:
   - name: shared-workspace
@@ -43,7 +43,8 @@ spec:
     params:
     - name: GOALS
       value:
-        - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - '-B'
+        - -Dmaven.repo.local=$(workspaces.maven.path)
         - 'test'
       name: CONTEXT_DIR
       value: $(params.CONTEXT_DIR)
@@ -61,7 +62,8 @@ spec:
     params:
     - name: GOALS
       value:
-        - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - '-B'
+        - -Dmaven.repo.local=$(workspaces.maven.path)
         - '-DskipTests'
         - 'package'
       name: CONTEXT_DIR
