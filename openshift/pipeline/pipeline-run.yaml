@@ -3,6 +3,10 @@ kind: PipelineRun
 metadata:
   generateName: maven-taskrun-
 spec:
+  podTemplate:
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 0
   pipelineRef:
     name: maven-pipeline
   params: 
@@ -11,19 +15,11 @@ spec:
   - name: CONTEXT_DIR
     value: src/spring-petclinic
   workspaces: 
-  - name: shared-workspace
-    volumeClaimTemplate:
-      spec:
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 500Mi
   - name: maven
-    volumeClaimTemplate:
-      spec:
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 1Gi
+    subPath: maven
+    persistentVolumeClaim:
+      claimName: tekton-tutorial-sources
+  - name: shared-workspace
+    subPath: source
+    persistentVolumeClaim:
+      claimName: tekton-tutorial-sources

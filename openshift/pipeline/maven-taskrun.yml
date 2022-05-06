@@ -1,0 +1,31 @@
+
+
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: maven-build-
+  labels:
+    tekton.dev/task: maven
+spec:
+  podTemplate:
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 0
+  taskRef:
+    name: maven
+    kind: ClusterTask
+  params:
+    - name: GOALS 
+      value:
+        - -B
+        - -DskipTests
+        - package
+    - name: CONTEXT_DIR
+      value: src/spring-petclinic
+  workspaces:
+    - name: maven-settings
+      emptyDir: {}
+    - name: source
+      persistentVolumeClaim: 
+        claimName: tekton-tutorial-sources
+

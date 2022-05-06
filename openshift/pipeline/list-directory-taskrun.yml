@@ -1,0 +1,23 @@
+
+
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: list-directory-
+spec:
+  podTemplate:
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+  taskRef:
+    name: list-directory
+  params:
+    - name: sub-dirs
+      value: ['src', 'src/spring-petclinic']
+  workspaces: 
+    - name: directory
+      persistentVolumeClaim:
+        claimName: tekton-tutorial-sources2
+

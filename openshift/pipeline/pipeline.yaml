@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: maven-pipeline
+  generateName: maven-pipeline-
 spec:
   workspaces:
   - name: shared-workspace
@@ -36,17 +36,15 @@ spec:
       value: "true"
     - name: revision
       value: $(params.GITHUB_REPO_REVISION)
-  - name: build-java
+  - name: build-java-test
     taskRef:
       name: maven
       kind: ClusterTask
     params:
     - name: GOALS
       value:
-        - '-B'
-        - '-DskipTests'
-        - '-Dmaven.gitcommitid.skip=true'
-        - 'install'
+        - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - 'test'
       name: CONTEXT_DIR
       value: $(params.CONTEXT_DIR)
     workspaces:
@@ -56,6 +54,25 @@ spec:
       workspace: shared-workspace
     runAfter:
     - fetch-repository 
+  - name: build-java
+    taskRef:
+      name: maven
+      kind: ClusterTask
+    params:
+    - name: GOALS
+      value:
+        - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - '-DskipTests'
+        - 'package'
+      name: CONTEXT_DIR
+      value: $(params.CONTEXT_DIR)
+    workspaces:
+    - name: maven-settings
+      workspace: maven
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - build-java-test
   - name: build-image
     taskRef:
       name: buildah
