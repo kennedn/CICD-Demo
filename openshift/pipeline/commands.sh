@@ -19,4 +19,5 @@ curl -sX GET -H 'Content-Type: application/json' "${EVENT_LISTENER_URL}" -d '{}'
   "eventID": "3af3315f-4de7-4de5-a778-93512f1b6dac"
 }
 oc logs deploy/el-petclinic-build -f | jq
+echo '{"repository": {"url": "'"$(git config --get remote.origin.url)"'"}, "head_commit": {"id": "'"$(git rev-parse HEAD)"'"}}' > webhook.json
 curl -sX POST -H 'Content-Type: application/JSON' "${EVENT_LISTENER_URL}" -d@github_webhook.json | jq -r-
