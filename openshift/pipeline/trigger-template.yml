@@ -8,14 +8,13 @@ spec:
     description: The git repository url
   - name: git-revision
     description: The git revision
-    default: pipelines-1.7
   - name: git-repo-name
     description: The name of the deployment to be created / patched
   resourceTemplates:
   - apiVersion: tekton.dev/v1beta1 
     kind: PipelineRun 
     metadata:
-      generateName: maven-image-build-$(tt.params.git-repo-name)-
+      generateName: maven-image-build-
     spec:
       serviceAccountName: pipeline
       podTemplate:

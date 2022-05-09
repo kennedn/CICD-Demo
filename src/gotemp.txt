@@ -1,4 +1,0 @@
-{{- range .items -}}
-    POD: {{.metadata.name}}
-    NODE: {{.spec.description}}
-{{- end -}}
