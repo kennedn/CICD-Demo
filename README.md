@@ -215,7 +215,7 @@ oc create secret generic quay.io-push --from-file=.dockerconfigjson=${XDG_RUNTIM
 The openshift-pipelines operator (which installs tekton), comes with a pre-defined service account used for pipeline work. We must patch our secret into this service account so that it inherits the secrets permissions
 
 ```bash
-oc patch serviceaccount pipeline -p '{"secrets": [{"name": "quay.io-push"}]}
+oc patch serviceaccount pipeline -p '{"secrets": [{"name": "quay.io-push"}]}'
 ```
 
 Change directory to the subfolder that contains our .yml files and create the pipeline
