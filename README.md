@@ -1,20 +1,6 @@
 # Tekton pipeline
 
-What is Tekton? The official documentation is here. There is a tutorial on using it in Openshift here
-
-One option for building container images is to use a Tekton pipeline running within the Openshift cluster itself.
-
-Pros:
-
-Will always use the correct CPU architecture for the cluster
-Does not require additional machines e.g. podman servers
-Can integrate unit testing
-
-Cons:
-
-Puts extra workload on the cluster whilst running
-Pipelines run multiple containers which must adhere to the resource quota
-The cons can be mitigated by using a dedicated namespace for the pipeline and its test deployment.
+Tekton is a powerful and flexible open-source framework for creating CI/CD systems, allowing developers to build, test, and deploy across cloud providers and on-premise systems.
 
 # PetClinic Pipeline
 I chose PetClinic as a test application for creating a mock CICD pipeline. There are 4 major tasks in the pipeline:
